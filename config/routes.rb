@@ -3,5 +3,7 @@ Rails.application.routes.draw do
 
 
   resources :posts
+  post "comment_create" => "posts#comment_create"
+  get "result" => "posts#result"
 
 end

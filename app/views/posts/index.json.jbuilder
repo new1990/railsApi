@@ -11,6 +11,10 @@ json.array! @posts do |posts|
     json.array! @chose_datas do |chose|
       json.chose_id chose.id
       json.chose_title chose.name
+      json.chose_count chose.count
     end
   end
+
+
+
 end

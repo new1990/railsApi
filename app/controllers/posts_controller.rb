@@ -1,8 +1,20 @@
 class PostsController < ApplicationController
+require "time"
 
   def index
     page = 2
-    @posts = Post.pager(page: params[:page], per: page)
+    nowis = Time.new
+    @posts = Post.pager(page: params[:page], per: page).where('(deadline >= ?) or (deadline = ?)', nowis,nil)
+    # @posts = Post.all
+    # @chose = Chose.joins(:posts)
+    # render json: @posts
+    render 'index', formats: 'json', handlers: 'jbuilder'
+  end
+
+  def result
+    page = 2
+    nowis = Time.new
+    @posts = Post.pager(page: params[:page], per: page).where('(deadline <= ?) or (deadline = ?)', nowis,nil)
     # @posts = Post.all
     # @chose = Chose.joins(:posts)
     # render json: @posts
@@ -23,7 +35,7 @@ class PostsController < ApplicationController
         @tasks.each do |index|
           if index['name'].empty?
           else
-            @chose = Chose.new(name: index['name'],posts_id: @post.id,st_flg: 1)
+            @chose = Chose.new(name: index['name'],posts_id: @post.id,st_flg: 1,count: 0)
             @chose.save
           end
         end
@@ -33,11 +45,39 @@ class PostsController < ApplicationController
       end
   end
 
+  def comment_create
+      @comment = Comment.new(comment_params)
+      if @comment.save
+        render :show, status: :created
+      else
+        render json: @comment.errors, status: :unprocessable_entity
+      end
+  end
+
+  def update
+    @chose = Chose.find(params[:id])
+    @count = @chose.count + 1
+    if @chose.update(count: @count)
+      render :show, status: :ok
+    else
+      render json: @chose.errors, status: :unprocessable_entity
+    end
+  end
+
   private
    def post_params
      params.fetch(:task, {}).permit(
          :title, :content
      )
    end
+
+   def comment_params
+     params.fetch(:comment, {}).permit(
+         :body, :posts_id
+     )
+   end
+
+
+
 
 end
