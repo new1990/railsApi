@@ -39,18 +39,18 @@ require "time"
             @chose.save
           end
         end
-        render :show, status: :created
+        render 'cre_success', formats: 'json', handlers: 'jbuilder'
       else
-        render json: @post.errors, status: :unprocessable_entity
+        render 'cre_error', formats: 'json', handlers: 'jbuilder'
       end
   end
 
   def comment_create
       @comment = Comment.new(comment_params)
       if @comment.save
-        render :show, status: :created
+        render 'cre_success', formats: 'json', handlers: 'jbuilder'
       else
-        render json: @comment.errors, status: :unprocessable_entity
+        render 'cre_error', formats: 'json', handlers: 'jbuilder'
       end
   end
 
@@ -58,9 +58,9 @@ require "time"
     @chose = Chose.find(params[:id])
     @count = @chose.count + 1
     if @chose.update(count: @count)
-      render :show, status: :ok
+      render 'up_success', formats: 'json', handlers: 'jbuilder'
     else
-      render json: @chose.errors, status: :unprocessable_entity
+      render 'up_error', formats: 'json', handlers: 'jbuilder'
     end
   end
 
