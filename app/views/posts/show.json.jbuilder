@@ -2,6 +2,7 @@
   json.id @posts.id
   json.title  @posts.title
   json.content  @posts.content
+  json.show_flg @deadline_flag
 
   chose_data(@posts.id)
 

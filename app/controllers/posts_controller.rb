@@ -22,15 +22,30 @@ require "time"
   end
 
   def show
+    nowis = Time.new
     @posts = Post.find(params[:id])
+    if @posts.deadline >= nowis
+      @deadline_flag = 0
+    else
+      @deadline_flag = 1
+    end
+
     render 'show', formats: 'json', handlers: 'jbuilder'
     # render json: @post
   end
 
   def create
-      @post = Post.new(post_params)
+      json_request = JSON.parse(request.body.read)
+      title = json_request["task"]["title"]
+      content = json_request["task"]["content"]
+      day = json_request["task"]["day"]
+      hour = json_request["task"]["hour"]
+      nowis = Time.new
+      deadline = nowis + day*60*60*24 + hour*60*60
+      @post = Post.new(title: title,content: content,deadline: deadline)
+      # @post = Post.new(post_params)
       if @post.save
-        json_request = JSON.parse(request.body.read)
+
         @tasks = json_request["task"]['todo']
         @tasks.each do |index|
           if index['name'].empty?
@@ -65,11 +80,11 @@ require "time"
   end
 
   private
-   def post_params
-     params.fetch(:task, {}).permit(
-         :title, :content
-     )
-   end
+   # def post_params
+   #   params.fetch(:task, {}).permit(
+   #       :title, :content,:day ,:hour
+   #   )
+   # end
 
    def comment_params
      params.fetch(:comment, {}).permit(

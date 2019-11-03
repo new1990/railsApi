@@ -4,6 +4,7 @@ json.array! @posts do |posts|
   json.id posts.id
   json.title  posts.title
   json.content  posts.content
+  json.deadline  posts.deadline.strftime("%Y/%m/%d %H:%M")
 
   chose_data(posts.id)
 
